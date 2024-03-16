@@ -45,7 +45,7 @@ for (size in n) {
     fit_measures <-fitMeasures(cfa_metric, c("chisq", "pvalue", "cfi", "rmsea"))
     
     temp_df <- data.frame(
-      sample_size = n*2,
+      sample_size = size*2,
       magnitude_level = factor_loadings,
       chisq = fit_measures['chisq'],
       pvalue = fit_measures['pvalue'],
@@ -62,11 +62,28 @@ for (size in n) {
   }
 }
 
-# Printing the data frame
-print(results_df)
-# Summary of the CFA
-summary(cfa_metric, fit.measures = TRUE, standardized = TRUE)
+#print(results_df)
 
+#changing the sample_size and magnitude from integer to factor, so that anova can be performed
+results_df$sample_size <- factor(results_df$sample_size, levels = c("100", "200", "500", "1000"))
+results_df$magnitude_level <- factor(results_df$magnitude_level, levels = c("0.9", "0.8", "0.7", "0.6"))
+
+anova_chisq <- aov(pvalue ~ sample_size * magnitude_level,
+           data = results_df
+)
+summary(anova_chisq)
+
+anova_rmsea <- aov(rmsea ~ sample_size * magnitude_level,
+                   data = results_df
+)
+
+summary(anova_rmsea)
+
+anova_cfi <- aov(rmsea ~ sample_size * magnitude_level,
+                 data = results_df
+)
+
+summary(anova_cfi)
 
 #Scalar (Strong) Invariance
 set.seed(123)
