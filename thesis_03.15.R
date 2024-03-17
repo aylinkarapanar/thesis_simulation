@@ -13,6 +13,8 @@ library(semTools)
 
 ##############
 #Measure (Week) Invariance
+start_time <- Sys.time()
+
 results_df <- data.frame(
   sample_size = numeric(),
   noninvariance_ratio = numeric(),
@@ -31,7 +33,7 @@ models <- c("latent =~ item1 + item2 + item3 + factor_loading*item4",
             "latent =~ item1 + factor_loading*item2 + factor_loading*item3 + factor_loading*item4", 
             "latent =~ factor_loading*item1 + factor_loading*item2 + factor_loading*item3 + factor_loading*item4")
 ratios <- c(0.25, 0.5, 0.75, 1)
-iterations <- 100
+iterations <- 2
 
 for (size in n) {
   for (i in 1:4) {
@@ -99,6 +101,10 @@ anova_cfi <- aov(rmsea ~ sample_size * magnitude_level * noninvarience_ratio,
 )
 
 summary(anova_cfi)
+
+end_time <- Sys.time()
+duration <- end_time - start_time
+print(duration)
 
 #Scalar (Strong) Invariance
 set.seed(123)
