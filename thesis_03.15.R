@@ -76,13 +76,14 @@ for (size in n) {
     for (iter in 1:iterations) {
         
         group1_parameters <- " latent =~ item1 + item2 + item3 + item4"
-        group2_parameters<-  paste(cat(paste("\"latent =~ item1 + item2 + item3 + item4")),
-        cat(paste(c(
-        "item1 ~ 0", "item2 ~ 0", "item3 ~ 0")), paste("item4 ~ 1*", intercept, "\""), sep = "\n"))
-    
-        group2_parameters <- paste("latent =~ item1 + item2 + item3 + item4",
-                                                         paste(c("item1 ~ 0", "item2 ~ 0", "item3 ~ 0", 
-                                                                 paste("item4 ~ 1*", intercept))), collapse = "\n")
+        model_string <- "latent =~ item1 + item2 + item3 + item4"
+        intercepts <- c("item1 ~ 0", "item2 ~ 0", "item3 ~ 0", paste("item4 ~ 1*", intercept))
+        
+        # Combine the model string and intercepts, separating them with newline characters
+        combined_model <- c(model_string, intercepts)
+        combined_model <- paste(combined_model, collapse = "\n ")
+        
+        group2_parameters<-l <- combined_model
         
         
         scalar_data_group1 <- simulateData(model = group1_parameters, sample.nobs = size)
@@ -151,4 +152,89 @@ duration <- end_time - start_time
 print(duration)
 
 
+###############
+set.seed(123)
+n <- c(50, 100, 250, 500)
+intercepts <- c(0.9, 0.8, 0.7, 0.6)
+
+results_df <- data.frame(
+  sample_size = numeric(),
+  magnitude_level = numeric(),
+  chisq = numeric(),
+  pvalue = numeric(),
+  cfi = numeric(),
+  rmsea = numeric()
+)
+
+models <- "latent =~ item1 + item2 + item3 + item4"
+
+ratios <- c(0.25, 0.5, 0.75, 1)
+iterations <- 2
+
+for (size in n) {
+  for (intercept in intercepts) {
+    for (iter in 1:iterations) {
+      
+      # Define the base model string
+      model_string <- "latent =~ item1 + item2 + item3 + item4"
+      
+      # Define intercepts for each item
+      intercept_part <- c("item1 ~ 0", "item2 ~ 0", "item3 ~ 0", paste("item4 ~ 1*", intercept))
+      
+      # Combine the base model string with intercepts
+      combined_model <- c(model_string, intercept_part)
+      
+      # Collapse the combined model elements into a single string with newline separators
+      combined_model <- paste(combined_model, collapse = "\n ")
+      
+      # Print or use the combined model syntax
+      print(combined_model)
+      
+      # Simulate data
+      scalar_data_group1 <- simulateData(model = models, sample.nobs = size)
+      scalar_data_group2 <- simulateData(model = model_string, sample.nobs = size)
+      
+      scalar_data_group1$group <- "Group1"
+      scalar_data_group2$group <- "Group2"
+      
+      scalar_data <- rbind(scalar_data_group1, scalar_data_group2)
+      
+      # Fit the confirmatory factor analysis model
+      cfa_scalar <- cfa(model_string, data = scalar_data, group = "group", group.equal = c("loadings", "intercepts"))
+      fit_measures <- fitMeasures(cfa_scalar, c("chisq", "pvalue", "cfi", "rmsea"))
+      
+      # Create a temporary dataframe
+      temp_df <- data.frame(
+        sample_size = size * 2,
+        magnitude_level = intercept,
+        chisq = fit_measures['chisq'],
+        pvalue = fit_measures['pvalue'],
+        cfi = fit_measures['cfi'],
+        rmsea = fit_measures['rmsea']
+      )
+      
+      # Bind the temporary dataframe to results_df
+      results_df <- rbind(results_df, temp_df)
+    }
+  }
+}
+
+# Print the results dataframe
+print(results_df)
+
+# Changing the sample_size and magnitude from integer to factor for ANOVA
+results_df$sample_size <- factor(results_df$sample_size, levels = c("100", "200", "500", "1000"))
+results_df$magnitude_level <- factor(results_df$magnitude_level, levels = c("0.9", "0.8", "0.7", "0.6"))
+
+# Perform ANOVA for chisq
+anova_chisq <- aov(chisq ~ sample_size * magnitude_level, data = results_df)
+summary(anova_chisq)
+
+# Perform ANOVA for rmsea
+anova_rmsea <- aov(rmsea ~ sample_size * magnitude_level, data = results_df)
+summary(anova_rmsea)
+
+# Perform ANOVA for cfi
+anova_cfi <- aov(cfi ~ sample_size * magnitude_level, data = results_df)
+summary(anova_cfi)
 
