@@ -17,9 +17,27 @@ library(semTools)
   
 intercepts <- c(0.9, 0.8, 0.7, 0.6)
 for (intercept in intercepts) {
+  cat(paste("\"latent =~ item1 + item2 + item3 + item4"))
   cat(paste(c(
-    "item1 ~ 0", "item2 ~ 0", "item3 ~ 0")), paste("item4 ~ 1*", intercept), sep = "\n")
+    "item1 ~ 0", "item2 ~ 0", "item3 ~ 0")), paste("item4 ~ 1*", intercept, "\""), sep = "\n")
 }
+
+
+paste("latent =~ item1 + item2 + item3 + item4", c(
+  "item1 ~ 0", "item2 ~ 0", "item3 ~ 0"), "item4 ~ 1*", intercept, sep = " ", collapse = "\"")
+
+model_string <- "latent =~ item1 + item2 + item3 + item4"
+intercepts <- c("item1 ~ 0", "item2 ~ 0", "item3 ~ 0", paste("item4 ~ 1*", intercept))
+
+# Combine the model string and intercepts, separating them with newline characters
+combined_model <- c(model_string, intercepts)
+combined_model <- paste(combined_model, collapse = "\n ")
+
+# Print the combined model
+print(combined_model)
+
+trial_model <- combined_model
+
 
 #############
 #Scalar (Strong) Invariance
@@ -58,10 +76,14 @@ for (size in n) {
     for (iter in 1:iterations) {
         
         group1_parameters <- " latent =~ item1 + item2 + item3 + item4"
-        group2_parameters <-   cat(paste(c(
-          "item1 ~ 0", "item2 ~ 0", "item3 ~ 0")), paste("item4 ~ 1*", intercept), sep = "\n")
+        group2_parameters<-  paste(cat(paste("\"latent =~ item1 + item2 + item3 + item4")),
+        cat(paste(c(
+        "item1 ~ 0", "item2 ~ 0", "item3 ~ 0")), paste("item4 ~ 1*", intercept, "\""), sep = "\n"))
+    
+        group2_parameters <- paste("latent =~ item1 + item2 + item3 + item4",
+                                                         paste(c("item1 ~ 0", "item2 ~ 0", "item3 ~ 0", 
+                                                                 paste("item4 ~ 1*", intercept))), collapse = "\n")
         
-        #missing quote at the end
         
         scalar_data_group1 <- simulateData(model = group1_parameters, sample.nobs = size)
         scalar_data_group2 <- simulateData(model = group2_parameters, sample.nobs = size)
@@ -96,7 +118,7 @@ for (size in n) {
         results_df <- rbind(results_df, temp_df)
       }
     }
-  }
+}
 
 
 #
