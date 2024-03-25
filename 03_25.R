@@ -14,7 +14,11 @@ create_model_string <- function(intercept, nitems) {
   
   # Loop to generate intercepts for each subset of items
   for (i in 1:nitems) {
-      intercept_part <- c(intercept_part, paste(item_names[(nitems - i + 1):nitems], "~ 1*", intercept))
+    current_intercepts <- rep(0, nitems)  # Initialize intercepts for the current subset
+    current_intercepts[(nitems - i + 1):nitems] <- intercept  # Set intercepts for the current subset
+    for (j in 1:nitems) {
+      intercept_part <- c(intercept_part, paste(item_names[j], "~", current_intercepts[j]))
+    }
   }
   
   pop.model <- paste(pop.model, "\n", paste(intercept_part, collapse = "\n"))
