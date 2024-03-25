@@ -21,6 +21,7 @@ create_model_string <- function(intercept, nitems) {
     }
   }
   
+  
   pop.model <- paste(pop.model, "\n", paste(intercept_part, collapse = "\n"))
   return(pop.model)
 }
@@ -51,3 +52,25 @@ for (size in n) {
     }
   }
 }
+
+
+##################################
+# Values to iterate over
+values <- c(0.6, 0.7, 0.8, 0.9)
+
+# Loop over values
+for (i in 1:length(values)) {
+  output <- paste("latent =~ item1 + item2 + item3 + item4", "\n")
+  
+  # Add values stepwise to subsequent items
+  output <- paste(output, "item1 ~1*", c(0, 0, 0, values[i]), "\n")
+  output <- paste(output, "item2 ~1*", c(0, 0, values[i], values[i]), "\n")
+  output <- paste(output, "item3 ~1*", c(0, values[i], values[i], values[i]), "\n")
+  output <- paste(output, "item4 ~1*", c(values[i], values[i], values[i], values[i]), "\n")
+  
+  cat(output, "\n")
+}
+
+
+
+
