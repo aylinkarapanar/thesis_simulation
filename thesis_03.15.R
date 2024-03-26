@@ -163,7 +163,7 @@ for (size in n) {
       
       scalar_data <- rbind(scalar_data_group1, scalar_data_group2)
       
-      cfa_model <- cfa(combined_model, data = scalar_data, group = "group")
+      cfa_model <- cfa(combined_model, data = scalar_data, group = "group", group.equal = c("loadings", "intercepts"))
       
       fit_measures <- fitMeasures(cfa_model, c("chisq", "pvalue", "cfi", "rmsea"))
       cfa_metric <- cfa(model_string, data = scalar_data , group = "group", group.equal = "loadings")
