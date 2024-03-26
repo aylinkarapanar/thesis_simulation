@@ -1,33 +1,56 @@
-n <- c(50, 100, 250, 500)
-intercepts <- c(0.9, 0.8, 0.7, 0.6)
-models <- c()
+#install.packages('lavaan')
+library(lavaan)
+
 
 n <- c(50, 100, 250, 500)
 intercepts <- c(0.9, 0.8, 0.7, 0.6)
 models <- c()
 
-# Loop to generate model strings with stepwise increasing intercept values
+
 for (i in 1:length(intercepts)) {
   output <- paste("latent =~ item1 + item2 + item3 + item4", "\n")
   
-  # Add values stepwise to subsequent items
-  output <- paste(output, "item1 ~1*", c(0, 0, 0, intercepts[i]), "\n")
-  output <- paste(output, "item2 ~1*", c(0, 0, intercepts[i], intercepts[i]), "\n")
-  output <- paste(output, "item3 ~1*", c(0, intercepts[i], intercepts[i], intercepts[i]), "\n")
-  output <- paste(output, "item4 ~1*", c(intercepts[i], intercepts[i], intercepts[i], intercepts[i]), "\n")
+  output <- paste(output, "item1 ~", c(0, 0, 0, intercepts[i]), "*1","\n")
+  output <- paste(output, "item2 ~", c(0, 0, intercepts[i], intercepts[i]), "*1", "\n")
+  output <- paste(output, "item3 ~", c(0, intercepts[i], intercepts[i], intercepts[i]),"*1", "\n")
+  output <- paste(output, "item4 ~", c(intercepts[i], intercepts[i], intercepts[i], intercepts[i]),"*1", "\n")
   
-  # Append the model string to the models vector
   models <- c(models, output)
 }
 
-# Create combinations of sample size, magnitude level, and model string
 design <- expand.grid(model = models, sample_size = n)
 
-# Add an index column
 
 magnitude_level <- rep(intercepts, each = 4, times = 4)
 design$magnitude_level <- magnitude_level
 design$ndesign <- 1:nrow(design)
+
+set.seed(123)
+
+results <- expand.grid(ndesign = design$ndesign,
+                      ratio = 0,
+                      magnitude_level = 0,
+                      chisq = 0,
+                      pvalue = 0,
+                      cfi = 0,
+                      rmsea = 0)
+
+model_string <- "latent =~ item1 + item2 + item3 + item4"
+
+for (i in 1:nrow(design)){
+  
+  scalar_data_group1 <- simulateData(model = model_string, sample.nobs = design$sample_size[i])
+  scalar_data_group2 <- simulateData(model = design$model[i], sample.nobs = design$sample_size[i])
+
+  scalar_data_group1$group <- "Group1"
+  scalar_data_group2$group <- "Group2"
+  
+  scalar_data <- rbind(scalar_data_group1, scalar_data_group2)
+  
+  cfa_metric <- cfa(model_string, data = scalar_data , group = "group", group.equal = "loadings")
+  print(design$magnitude_level[i])
+  print(summary(cfa_metric)) 
+}
 
 
 
