@@ -1,4 +1,5 @@
 #install.packages('lavaan')
+
 library(lavaan)
 
 start_time <- Sys.time()
@@ -8,7 +9,7 @@ set.seed(123)
 
 n <- c(50, 100, 250, 500)
 intercepts <- c(0.1, 0.2, 0.3, 0.4)
-iterations <- 1:2
+iterations <- 1:1000
 ratios <- c(0.25, 0.5, 0.75, 1)
 models <- c()
 
@@ -72,7 +73,6 @@ results$group_size <- factor(results$group_size, levels = c("50", "100", "250", 
 results$magnitude_level <- factor(results$magnitude_level, levels = c("0.1", "0.2", "0.3", "0.4"))
 results$model_ratios <- factor(results$model_ratios, levels = c("0.25", "0.5", "0.75", "1"))
 
-
 anova_chisq <- aov(chisq ~ group_size * magnitude_level * model_ratios, data = results)
 summary(anova_chisq)
 
@@ -81,7 +81,6 @@ summary(anova_rmsea)
 
 anova_cfi <- aov(cfi ~ group_size * magnitude_level * model_ratios, data = results)
 summary(anova_cfi)
-
 
 end_time <- Sys.time()
 duration <- end_time - start_time
