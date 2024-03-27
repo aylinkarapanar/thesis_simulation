@@ -10,6 +10,8 @@ set.seed(123)
 n <- c(50, 100, 250, 500)
 intercepts <- c(0.1, 0.2, 0.3, 0.4)
 iterations <- 1:100
+#remove 1 or add 0 and 1 then remove them from the anova
+#use boxplot to visualize 
 ratios <- c(0.25, 0.5, 0.75, 1)
 models <- c()
 
