@@ -1,15 +1,15 @@
 #install.packages('lavaan')
-
+#install.packages('effectsize')
 library(lavaan)
+library(effectsize)
 
-start_time <- Sys.time()
+#start_time <- Sys.time()
 
-#where to put set seed?
 set.seed(123)
 
 n <- c(50, 100, 250, 500)
 intercepts <- c(0.1, 0.2, 0.3, 0.4)
-iterations <- 1:1000
+iterations <- 1:100
 ratios <- c(0.25, 0.5, 0.75, 1)
 models <- c()
 
@@ -43,7 +43,7 @@ results$magnitude_level <- magnitude_level
 
 results$group_size <- design$group_size
 
-
+#should I specify the intercepts for the group 1?
 group1_string <- "latent =~ item1 + item2 + item3 + item4"
 
 for (i in 1:nrow(design)){
@@ -55,10 +55,6 @@ for (i in 1:nrow(design)){
   scalar_data_group2$group <- "Group2"
   
   scalar_data <- rbind(scalar_data_group1, scalar_data_group2)
-  
-  #cfa_metric <- cfa(model_string, data = scalar_data , group = "group", group.equal = "loadings")
-  #print(paste("Magnitude Level:", results$magnitude_level[i], ", Model Ratio:", results$model_ratios[i]))
-  #print(summary(cfa_metric)) 
   
   cfa_model <- cfa(model_string, data = scalar_data, group = "group", group.equal = c("loadings", "intercepts"))
   fit_measures <- fitMeasures(cfa_model, c("chisq", "pvalue", "cfi", "rmsea"))
@@ -82,6 +78,11 @@ summary(anova_rmsea)
 anova_cfi <- aov(cfi ~ group_size * magnitude_level * model_ratios, data = results)
 summary(anova_cfi)
 
-end_time <- Sys.time()
-duration <- end_time - start_time
-print(duration)
+eta_squared(anova_chisq)
+eta_squared(anova_rmsea)
+eta_squared(anova_cfi)
+
+#end_time <- Sys.time()
+#duration <- end_time - start_time
+#print(duration)
+#Time difference of 1.278603 hours
