@@ -12,17 +12,17 @@ intercepts <- c(0.1, 0.2, 0.3, 0.4)
 iterations <- 1:100
 #remove 1 or add 0 and 1 then remove them from the anova
 #use boxplot to visualize 
-ratios <- c(0.25, 0.5, 0.75, 1)
+ratios <- c(0.25, 0.5, 0.75)
 models <- c()
 
 
 for (i in 1:length(intercepts)) {
   output <- paste("latent =~ item1 + item2 + item3 + item4", "\n")
   
-  output <- paste(output, "item1 ~", c(0, 0, 0, intercepts[i]), "*1","\n")
-  output <- paste(output, "item2 ~", c(0, 0, intercepts[i], intercepts[i]), "*1", "\n")
-  output <- paste(output, "item3 ~", c(0, intercepts[i], intercepts[i], intercepts[i]),"*1", "\n")
-  output <- paste(output, "item4 ~", c(intercepts[i], intercepts[i], intercepts[i], intercepts[i]),"*1", "\n")
+  output <- paste(output, "item1 ~", c(0, 0, 0), "*1","\n")
+  output <- paste(output, "item2 ~", c(0, 0, intercepts[i]), "*1", "\n")
+  output <- paste(output, "item3 ~", c(0, intercepts[i], intercepts[i]),"*1", "\n")
+  output <- paste(output, "item4 ~", c(intercepts[i], intercepts[i], intercepts[i]),"*1", "\n")
   
   models <- c(models, output)
 }
@@ -37,10 +37,10 @@ results <- expand.grid(ndesign = design$ndesign,
                        pvalue = 0,
                        cfi = 0,
                        rmsea = 0)
-model_ratios <- rep(ratios, times = length(intercepts)*length(iterations)*4)
+model_ratios <- rep(ratios, times = length(intercepts)*length(iterations)*length(n))
 results$model_ratios <- model_ratios
 
-magnitude_level <- rep(intercepts, each = 4, times = length(intercepts)*length(iterations))
+magnitude_level <- rep(intercepts, each = length(ratios), times = length(n)*length(iterations))
 results$magnitude_level <- magnitude_level
 
 results$group_size <- design$group_size

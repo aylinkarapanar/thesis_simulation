@@ -26,3 +26,12 @@ cfi_plot <- ggplot(results, aes(x = group_size, y = cfi)) +
 
 print(cfi_plot)
 
+
+###boxplots
+install.packages('lattice')
+library(lattice)
+
+# Create boxplots with interactions
+bwplot(chisq ~ group_size | magnitude_level * model_ratios, data = results,
+       main = "Boxplot of Chi-Square Metric by Sample Size, Magnitude Level, and Ratio",
+       xlab = "Sample Size", ylab = "Chi-Square Metric")
