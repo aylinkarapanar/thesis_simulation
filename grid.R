@@ -80,9 +80,14 @@ summary(anova_rmsea)
 anova_cfi <- aov(cfi ~ group_size * magnitude_level * model_ratios, data = results)
 summary(anova_cfi)
 
-eta_squared(anova_chisq)
-eta_squared(anova_rmsea)
-eta_squared(anova_cfi)
+eta_chisq <- eta_squared(anova_chisq)
+interpret_eta_squared(eta_chisq, rules = "cohen1992")
+
+eta_rmsea <- eta_squared(anova_rmsea)
+interpret_eta_squared(eta_rmsea, rules = "cohen1992")
+
+eta_cfi <- eta_squared(anova_cfi)
+interpret_eta_squared(eta_cfi, rules = "cohen1992")
 
 #end_time <- Sys.time()
 #duration <- end_time - start_time
