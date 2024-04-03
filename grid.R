@@ -3,15 +3,11 @@
 library(lavaan)
 library(effectsize)
 
-#start_time <- Sys.time()
-
 set.seed(123)
 
 n <- c(50, 100, 250, 500)
 intercepts <- c(0.1, 0.2, 0.3, 0.4)
 iterations <- 1:100
-#remove 1 or add 0 and 1 then remove them from the anova
-#use boxplot to visualize 
 ratios <- c(0.25, 0.5, 0.75)
 models <- c()
 
@@ -45,7 +41,6 @@ results$magnitude_level <- magnitude_level
 
 results$group_size <- design$group_size
 
-#should I specify the intercepts for the group 1?
 group1_string <- "latent =~ item1 + item2 + item3 + item4"
 
 for (i in 1:nrow(design)){
@@ -88,8 +83,3 @@ interpret_eta_squared(eta_rmsea, rules = "cohen1992")
 
 eta_cfi <- eta_squared(anova_cfi)
 interpret_eta_squared(eta_cfi, rules = "cohen1992")
-
-#end_time <- Sys.time()
-#duration <- end_time - start_time
-#print(duration)
-#Time difference of 1.278603 hours
