@@ -18,6 +18,10 @@ chisq_color_plot <- ggplot(results, aes(x = group_size, y = chisq, color = magni
        x = "Sample Group Size",
        y = "Chi-Square") 
 
+chisq_file_path <- file.path(directory, "chisq_color_plot.png")
+ggsave(chisq_file_path, plot = chisq_color_plot, width = 12, height = 6)
+
+
 rmsea_color_plot <- ggplot(results, aes(x = group_size, y = rmsea, color = magnitude_level)) +
   geom_boxplot() +
   theme_minimal() +
@@ -27,6 +31,9 @@ rmsea_color_plot <- ggplot(results, aes(x = group_size, y = rmsea, color = magni
        subtitle = "by Sample Group Size, Magnitude Level & Model Ratios",
        x = "Sample Group Size",
        y = "RMSEA")
+file_path <- file.path(directory, "rmsea_color_plot.jpeg")
+ggsave(file_path, rmsea_color_plot, width = 12, height = 6)
+
 
 cfi_color_plot <- ggplot(results, aes(x = group_size, y = cfi, color = magnitude_level)) +
   geom_boxplot() +
@@ -38,8 +45,10 @@ cfi_color_plot <- ggplot(results, aes(x = group_size, y = cfi, color = magnitude
        x = "Sample Group Size",
        y = "CFI") 
 
+cfi_file_path <- file.path(directory, "cfi_color_plot.png")
+ggsave(cfi_file_path, plot = cfi_color_plot, width = 12, height = 6)
 
-combined_plots <- grid.arrange(chisq_color_plot, rmsea_color_plot, cfi_color_plot, nrow = 3)
-combined_file_path <- file.path(directory, "combined_plots.jpeg")
-ggsave(combined_file_path, plot = combined_plots, width = 12, height = 18)
+#combined_plots <- grid.arrange(chisq_color_plot, rmsea_color_plot, cfi_color_plot, nrow = 3)
+#combined_file_path <- file.path(directory, "combined_plots.jpeg")
+#ggsave(combined_file_path, plot = combined_plots, width = 12, height = 18)
 
