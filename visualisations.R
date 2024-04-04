@@ -14,7 +14,7 @@ chisq_color_plot <- ggplot(results, aes(x = group_size, y = chisq, color = magni
   facet_wrap(~model_ratios) +
   scale_color_manual(name = "Magnitude Level", values = custom_colors) +
   labs(title = "Boxplot of Chi Square Values",
-       subtitle = "by Sample Group Size, Magnitude Level & Model Ratios", 
+       subtitle = "by Sample Group Size, Magnitude Level & Noninvariance Ratios", 
        x = "Sample Group Size",
        y = "Chi-Square") 
 
@@ -28,7 +28,7 @@ rmsea_color_plot <- ggplot(results, aes(x = group_size, y = rmsea, color = magni
   facet_wrap(~model_ratios) +
   scale_color_manual(name = "Magnitude Level", values = custom_colors) +
   labs(title = "Boxplot of RMSEA Values",
-       subtitle = "by Sample Group Size, Magnitude Level & Model Ratios",
+       subtitle = "by Sample Group Size, Magnitude Level & Noninvariance Ratios",
        x = "Sample Group Size",
        y = "RMSEA")
 file_path <- file.path(directory, "rmsea_color_plot.jpeg")
@@ -41,7 +41,7 @@ cfi_color_plot <- ggplot(results, aes(x = group_size, y = cfi, color = magnitude
   facet_wrap(~model_ratios) +
   scale_color_manual(name = "Magnitude Level", values = custom_colors) +
   labs(title = "Boxplot of CFI Values",
-       subtitle = "by Sample Group Size, Magnitude Level & Model Ratios", 
+       subtitle = "by Sample Group Size, Magnitude Level & Noninvariance Ratios", 
        x = "Sample Group Size",
        y = "CFI") 
 
