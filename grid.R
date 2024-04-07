@@ -3,15 +3,19 @@
 library(lavaan)
 library(effectsize)
 
+#setting seed for reproducibility
 set.seed(123)
 
+#defining independent variables and their values
 n <- c(50, 100, 250, 500)
 intercepts <- c(0.1, 0.2, 0.3, 0.4)
 iterations <- 1:100
 ratios <- c(0.25, 0.5, 0.75)
+
+#creating a vector to save the model syntax
 models <- c()
 
-
+#defining models with different noninvariance ratios and intercept values
 for (i in 1:length(intercepts)) {
   output <- paste("latent =~ item1 + item2 + item3 + item4", "\n")
   
@@ -23,16 +27,19 @@ for (i in 1:length(intercepts)) {
   models <- c(models, output)
 }
 
+#creating a data frame to store each condition and their iterations
 design <- expand.grid(model = models, group_size = n, iteration = iterations)
 
 design$ndesign <- 1:nrow(design)
 
-
+#creating a data frame for the results
 results <- expand.grid(ndesign = design$ndesign,
                        chisq = 0,
                        pvalue = 0,
                        cfi = 0,
                        rmsea = 0)
+
+#recording the noninvariance ratio and intercept values for each model int the results df
 model_ratios <- rep(ratios, times = length(intercepts)*length(iterations)*length(n))
 results$model_ratios <- model_ratios
 
@@ -41,31 +48,41 @@ results$magnitude_level <- magnitude_level
 
 results$group_size <- design$group_size
 
+#defining the model for group 1
 group1_string <- "latent =~ item1 + item2 + item3 + item4"
 
 for (i in 1:nrow(design)){
   
+  #simulating data for both groups with defined model syntax and sample size
   scalar_data_group1 <- simulateData(model = group1_string, sample.nobs = design$group_size[i])
   scalar_data_group2 <- simulateData(model = design$model[i], sample.nobs = design$group_size[i])
-
+  
+  #adding grouping variable for both
   scalar_data_group1$group <- "Group1"
   scalar_data_group2$group <- "Group2"
   
+  #adding the data from the groups together
   scalar_data <- rbind(scalar_data_group1, scalar_data_group2)
   
-  cfa_model <- cfa(model_string, data = scalar_data, group = "group", group.equal = c("loadings", "intercepts"))
+  #executing CFA for scalar invariance assessment 
+  cfa_model <- cfa(group1_string, data = scalar_data, group = "group", group.equal = c("loadings", "intercepts"))
+  
+  #defining the fit measures of interest
   fit_measures <- fitMeasures(cfa_model, c("chisq", "pvalue", "cfi", "rmsea"))
  
+  #recording the fit measures to the results df
   results$chisq[results$ndesign == i] <- fit_measures['chisq']
   results$pvalue[results$ndesign == i] <- fit_measures['pvalue']
   results$cfi[results$ndesign == i] <- fit_measures['cfi']
   results$rmsea[results$ndesign == i] <- fit_measures['rmsea']
 }
 
+#turning these variables to categorical variables for executing ANOVA
 results$group_size <- factor(results$group_size, levels = c("50", "100", "250", "500"))
 results$magnitude_level <- factor(results$magnitude_level, levels = c("0.1", "0.2", "0.3", "0.4"))
 results$model_ratios <- factor(results$model_ratios, levels = c("0.25", "0.5", "0.75", "1"))
 
+#running ANOVAs for each fit indices
 anova_chisq <- aov(chisq ~ group_size * magnitude_level * model_ratios, data = results)
 summary(anova_chisq)
 
@@ -75,6 +92,7 @@ summary(anova_rmsea)
 anova_cfi <- aov(cfi ~ group_size * magnitude_level * model_ratios, data = results)
 summary(anova_cfi)
 
+#calculating the eta squared and interpreting them based on Cohen (1992)
 eta_chisq <- eta_squared(anova_chisq)
 interpret_eta_squared(eta_chisq, rules = "cohen1992")
 
