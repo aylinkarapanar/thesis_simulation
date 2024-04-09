@@ -26,10 +26,18 @@ numeric_columns <- ratios_table[, !names(ratios_table) %in% c("model_ratios", "m
 
 ratios_table[, !names(ratios_table) %in% c("model_ratios", "magnitude_level", "group_size")] <- round(numeric_columns, 3)
 
+ggplot(ratios_table, aes(x=`group_size`, y= `satisfactory_chisq`,
+                         col=`magnitude_level`, group=`magnitude_level`)) +
+  geom_point() + geom_line() + 
+  facet_grid(. ~ `model_ratios`)
 
 ggplot(ratios_table, aes(x=`group_size`, y= `satisfactory_rmsea`,
                          col=`magnitude_level`, group=`magnitude_level`)) +
     geom_point() + geom_line() + 
     facet_grid(. ~ `model_ratios`)
 
+ggplot(ratios_table, aes(x=`group_size`, y= `satisfactory_cfi`,
+                         col=`magnitude_level`, group=`magnitude_level`)) +
+  geom_point() + geom_line() + 
+  facet_grid(. ~ `model_ratios`)
 

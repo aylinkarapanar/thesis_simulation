@@ -55,31 +55,74 @@ ggsave(cfi_file_path, plot = cfi_color_plot, width = 12, height = 6)
 #install.packages('dplyr')
 library(dplyr)
 
-# Calculate mean, standard error, and confidence intervals
-mean_results <- results %>%
+# calculating mean, standard error, and confidence intervals for Chi-square
+mean_chisq <- results %>%
   group_by(model_ratios, magnitude_level, group_size) %>%
   summarise(mean = mean(chisq),
             se = sd(chisq) / sqrt(n()),
             ci_low = mean - 1.96 * se,
             ci_high = mean + 1.96 * se)
 
-
-
-
-# Create the line graph with error bars and dots for mean
-chisq_line_plot <- ggplot(mean_results, aes(x = group_size, y = mean, color = magnitude_level)) +
-  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2, position = position_dodge(width = 0.5)) +  # Error bars
-  geom_point(position = position_dodge(width = 0.5), size = 3) +  # Dots for mean
+chisq_line_plot <- ggplot(mean_chisq, aes(x = group_size, y = mean, color = magnitude_level)) +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2, position = position_dodge(width = 0.5)) +  
+  geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
   theme_minimal() +
   facet_wrap(~model_ratios) +
   scale_color_manual(name = "Magnitude Level", values = custom_colors) +
-  labs(title = "Line Graph of Mean Chi Square Values with Confidence Intervals",
-       subtitle = "by Sample Group Size, Magnitude Level & Noninvariance Ratios", 
-       x = "Sample Group Size",
-       y = "Mean Chi-Square") +
-  theme(legend.position = "bottom")  # Adjust legend position if needed
+  labs(title = "Graph of the Mean of Chi-Square Values with 95% Confidence Interval",
+       subtitle = "by Sample Size Per Group, Magnitude Level & Noninvariance Ratios", 
+       x = "Sample Size Per Group",
+       y = "Chi-Square") +
+  theme(legend.position = "bottom")  
 
-print(chisq_line_plot)
+chisq_file_path <- file.path(directory, "chisq_line_plot.png")
+ggsave(chisq_file_path, plot = chisq_line_plot, width = 12, height = 6)
          
+# calculating mean, standard error, and confidence intervals for RMSEA
+mean_rmsea <- results %>%
+  group_by(model_ratios, magnitude_level, group_size) %>%
+  summarise(mean = mean(rmsea),
+            se = sd(rmsea) / sqrt(n()),
+            ci_low = mean - 1.96 * se,
+            ci_high = mean + 1.96 * se)
+
+rmsea_line_plot <- ggplot(mean_rmsea, aes(x = group_size, y = mean, color = magnitude_level)) +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2, position = position_dodge(width = 0.5)) +  
+  geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
+  theme_minimal() +
+  facet_wrap(~model_ratios) +
+  scale_color_manual(name = "Magnitude Level", values = custom_colors) +
+  labs(title = "Graph of the Mean of RMSEA Values with 95% Confidence Interval",
+       subtitle = "by Sample Size Per Group, Magnitude Level & Noninvariance Ratios", 
+       x = "Sample Size Per Group",
+       y = "RMSEA") +
+  theme(legend.position = "bottom")  
+
+rmsea_file_path <- file.path(directory, "rmsea_line_plot.png")
+ggsave(rmsea_file_path, plot = rmsea_line_plot, width = 12, height = 6)
+
+# calculating mean, standard error, and confidence intervals for CFI
+mean_cfi <- results %>%
+  group_by(model_ratios, magnitude_level, group_size) %>%
+  summarise(mean = mean(cfi),
+            se = sd(cfi) / sqrt(n()),
+            ci_low = mean - 1.96 * se,
+            ci_high = mean + 1.96 * se)
+
+
+cfi_line_plot <- ggplot(mean_cfi, aes(x = group_size, y = mean, color = magnitude_level)) +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2, position = position_dodge(width = 0.5)) +  
+  geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
+  theme_minimal() +
+  facet_wrap(~model_ratios) +
+  scale_color_manual(name = "Magnitude Level", values = custom_colors) +
+  labs(title = "Graph of the Mean of CFI Values with 95% Confidence Interval",
+       subtitle = "by Sample Size Per Group, Magnitude Level & Noninvariance Ratios", 
+       x = "Sample Size Per Group",
+       y = "CFI") +
+  theme(legend.position = "bottom")  
+
+cfi_file_path <- file.path(directory, "cfi_line_plot.png")
+ggsave(cfi_file_path, plot = cfi_line_plot, width = 12, height = 6)
 
 
