@@ -63,15 +63,13 @@ mean_results <- results %>%
             ci_low = mean - 1.96 * se,
             ci_high = mean + 1.96 * se)
 
-# Print the head of mean_results to verify
-head(mean_results)
 
-library(ggplot2)
+
 
 # Create the line graph with error bars and dots for mean
 chisq_line_plot <- ggplot(mean_results, aes(x = group_size, y = mean, color = magnitude_level)) +
-  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2) +  # Error bars
-  geom_point(size = 3) +  # Dots for mean
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2, position = position_dodge(width = 0.5)) +  # Error bars
+  geom_point(position = position_dodge(width = 0.5), size = 3) +  # Dots for mean
   theme_minimal() +
   facet_wrap(~model_ratios) +
   scale_color_manual(name = "Magnitude Level", values = custom_colors) +
@@ -81,9 +79,7 @@ chisq_line_plot <- ggplot(mean_results, aes(x = group_size, y = mean, color = ma
        y = "Mean Chi-Square") +
   theme(legend.position = "bottom")  # Adjust legend position if needed
 
-# Save the plot to a file
-chisq_file_path <- file.path(directory, "chisq_line_plot.png")
-ggsave(chisq_file_path, plot = chisq_line_plot, width = 12, height = 6)
-
+print(chisq_line_plot)
+         
 
 
