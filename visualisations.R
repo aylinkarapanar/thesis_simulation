@@ -10,7 +10,6 @@ custom_colors <- c("0.1" = "#1b9e77", "0.2" = "#d95f02", "0.3" = "#7570b3", "0.4
 
 chisq_color_plot <- ggplot(results, aes(x = group_size, y = chisq, color = magnitude_level)) +
   geom_boxplot() +
-  stat_summary(fun.y=mean, geom="point", color="black", fill="black") +
   theme_minimal() +
   facet_wrap(~model_ratios) +
   scale_color_manual(name = "Magnitude Level", values = custom_colors) +
@@ -76,6 +75,3 @@ chisq_arrow_plot <- ggplot(mean_results, aes(x = group_size, y = chisq, color = 
 
 # Print the arrow plot
 print(chisq_arrow_plot)
-
-
-
