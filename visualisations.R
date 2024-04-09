@@ -64,7 +64,7 @@ mean_chisq <- results %>%
             ci_high = mean + 1.96 * se)
 
 chisq_line_plot <- ggplot(mean_chisq, aes(x = group_size, y = mean, color = magnitude_level)) +
-  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2, position = position_dodge(width = 0.5)) +  
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0, position = position_dodge(width = 0.5)) + 
   geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
   theme_minimal() +
   facet_wrap(~model_ratios) +
@@ -87,7 +87,7 @@ mean_rmsea <- results %>%
             ci_high = mean + 1.96 * se)
 
 rmsea_line_plot <- ggplot(mean_rmsea, aes(x = group_size, y = mean, color = magnitude_level)) +
-  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2, position = position_dodge(width = 0.5)) +  
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0, position = position_dodge(width = 0.5)) +  
   geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
   theme_minimal() +
   facet_wrap(~model_ratios) +
@@ -111,7 +111,7 @@ mean_cfi <- results %>%
 
 
 cfi_line_plot <- ggplot(mean_cfi, aes(x = group_size, y = mean, color = magnitude_level)) +
-  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2, position = position_dodge(width = 0.5)) +  
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0, position = position_dodge(width = 0.5)) +  
   geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
   theme_minimal() +
   facet_wrap(~model_ratios) +

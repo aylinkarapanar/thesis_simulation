@@ -26,18 +26,36 @@ numeric_columns <- ratios_table[, !names(ratios_table) %in% c("model_ratios", "m
 
 ratios_table[, !names(ratios_table) %in% c("model_ratios", "magnitude_level", "group_size")] <- round(numeric_columns, 3)
 
-ggplot(ratios_table, aes(x=`group_size`, y= `satisfactory_chisq`,
-                         col=`magnitude_level`, group=`magnitude_level`)) +
+ratios_chisq_graph <- ggplot(ratios_table, aes(x=`group_size`, y= `satisfactory_chisq`,
+                                              col=`magnitude_level`, group=`magnitude_level`)) +
   geom_point() + geom_line() + 
-  facet_grid(. ~ `model_ratios`)
+  facet_grid(. ~ `model_ratios`) +
+  scale_color_manual(name = "Magnitude Level", values = custom_colors) +
+  labs(title = " The Ratio of Satisfactory Chi-Square Values",
+       subtitle = "Across Sample Group Size, Magnitude Level & Noninvariance Ratios",
+       x = "Sample Size Per Group",
+       y = "Ratio")
 
-ggplot(ratios_table, aes(x=`group_size`, y= `satisfactory_rmsea`,
-                         col=`magnitude_level`, group=`magnitude_level`)) +
-    geom_point() + geom_line() + 
-    facet_grid(. ~ `model_ratios`)
-
-ggplot(ratios_table, aes(x=`group_size`, y= `satisfactory_cfi`,
-                         col=`magnitude_level`, group=`magnitude_level`)) +
+ratios_rmsea_graph <- ggplot(ratios_table, aes(x=`group_size`, y= `satisfactory_rmsea`,
+                                               col=`magnitude_level`, group=`magnitude_level`)) +
   geom_point() + geom_line() + 
-  facet_grid(. ~ `model_ratios`)
+  facet_grid(. ~ `model_ratios`) + 
+  scale_color_manual(name = "Magnitude Level", values = custom_colors) +
+  labs(title = " The Ratio of Satisfactory RMSEA Values",
+       subtitle = "Across Sample Group Size, Magnitude Level & Noninvariance Ratios",
+       x = "Sample Size Per Group",
+       y = "Ratio")
 
+ratios_cfi_graph <- ggplot(ratios_table, aes(x=`group_size`, y= `satisfactory_cfi`,
+                                             col=`magnitude_level`, group=`magnitude_level`)) +
+  geom_point() + geom_line() + 
+  facet_grid(. ~ `model_ratios`) + 
+  scale_color_manual(name = "Magnitude Level", values = custom_colors) +
+  labs(title = " The Ratio of Satisfactory CFI Values",
+       subtitle = "Across Sample Group Size, Magnitude Level & Noninvariance Ratios",
+       x = "Sample Size Per Group",
+       y = "Ratio")
+
+combined_ratio_plots <- grid.arrange(ratios_chisq_graph, ratios_rmsea_graph, ratios_cfi_graph, nrow = 3)
+combined_file_path <- file.path(directory, "combined_ratio_plots.png")
+ggsave(combined_file_path, plot = combined_ratio_plots, width = 12, height = 18)
