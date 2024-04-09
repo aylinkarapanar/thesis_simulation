@@ -20,7 +20,7 @@ names(satisfactory_cfi) <- c("model_ratios", "magnitude_level", "group_size", "s
 
 # merge the ratios
 ratios_table <- merge(satisfactory_chisq, satisfactory_rmsea)
-ratios_table <- merge(final_table, satisfactory_cfi)
+ratios_table <- merge(ratios_table, satisfactory_cfi)
 
 numeric_columns <- ratios_table[, !names(ratios_table) %in% c("model_ratios", "magnitude_level", "group_size")]
 
