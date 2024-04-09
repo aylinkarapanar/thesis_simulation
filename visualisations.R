@@ -10,6 +10,7 @@ custom_colors <- c("0.1" = "#1b9e77", "0.2" = "#d95f02", "0.3" = "#7570b3", "0.4
 
 chisq_color_plot <- ggplot(results, aes(x = group_size, y = chisq, color = magnitude_level)) +
   geom_boxplot() +
+  stat_summary(fun.y=mean, geom="point", color="black", fill="black") +
   theme_minimal() +
   facet_wrap(~model_ratios) +
   scale_color_manual(name = "Magnitude Level", values = custom_colors) +
@@ -51,4 +52,30 @@ ggsave(cfi_file_path, plot = cfi_color_plot, width = 12, height = 6)
 #combined_plots <- grid.arrange(chisq_color_plot, rmsea_color_plot, cfi_color_plot, nrow = 3)
 #combined_file_path <- file.path(directory, "combined_plots.jpeg")
 #ggsave(combined_file_path, plot = combined_plots, width = 12, height = 18)
+
+
+
+###arrow plot
+
+# Calculate mean chi-square and group size for each condition
+mean_results <- aggregate(cbind(chisq) ~ model_ratios + magnitude_level + group_size, data = results, FUN = mean)
+head(mean_results)
+
+chisq_arrow_plot <- ggplot(mean_results, aes(x = group_size, y = chisq, color = magnitude_level)) +
+  geom_segment(aes(xend = group_size, yend = chisq, x = group_size, y = 0), 
+               arrow = arrow(length = unit(0.25, "cm"), type = "closed"), 
+               size = 0.5) +
+  theme_minimal() +
+  facet_wrap(~model_ratios) +
+  scale_color_manual(name = "Magnitude Level", values = custom_colors) +
+  labs(title = "Arrow Plot of Mean Chi Square Values",
+       subtitle = "by Sample Group Size, Magnitude Level & Noninvariance Ratios", 
+       x = "Sample Group Size",
+       y = "Mean Chi-Square") +
+  theme(legend.position = "bottom")  # Adjust legend position if needed
+
+# Print the arrow plot
+print(chisq_arrow_plot)
+
+
 
