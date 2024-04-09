@@ -56,18 +56,25 @@ ggsave(cfi_file_path, plot = cfi_color_plot, width = 12, height = 6)
 
 ###arrow plot
 
-# Calculate mean chi-square and group size for each condition
-mean_results <- aggregate(cbind(chisq) ~ model_ratios + magnitude_level + group_size, data = results, FUN = mean)
-head(mean_results)
 
-chisq_arrow_plot <- ggplot(mean_results, aes(x = group_size, y = chisq, color = magnitude_level)) +
-  geom_segment(aes(xend = group_size, yend = chisq, x = group_size, y = 0), 
-               arrow = arrow(length = unit(0.25, "cm"), type = "closed"), 
-               size = 0.5) +
+mean_results <- aggregate(chisq ~ model_ratios + magnitude_level + group_size, data = results, FUN = function(x) {
+  mean_val <- mean(x)
+  se_val <- sd(x) / sqrt(length(x))
+  ci_low <- mean_val - 1.96 * se_val
+  ci_high <- mean_val + 1.96 * se_val
+  c(mean_val, ci_low, ci_high)  # Return mean, lower CI, upper CI
+})
+
+# Rename columns for clarity
+colnames(mean_results) <- c("model_ratios", "magnitude_level", "group_size", "mean", "ci_low", "ci_high")
+
+# Create the arrow plot with confidence intervals
+chisq_arrow_plot <- ggplot(mean_results, aes(x = group_size, y = mean, color = magnitude_level)) +
+  geom_pointrange(aes(ymin = ci_low, ymax = ci_high), size = 1.2) +  # Plot mean and confidence intervals
   theme_minimal() +
   facet_wrap(~model_ratios) +
   scale_color_manual(name = "Magnitude Level", values = custom_colors) +
-  labs(title = "Arrow Plot of Mean Chi Square Values",
+  labs(title = "Arrow Plot of Mean Chi Square Values with Confidence Intervals",
        subtitle = "by Sample Group Size, Magnitude Level & Noninvariance Ratios", 
        x = "Sample Group Size",
        y = "Mean Chi-Square") +
