@@ -11,7 +11,7 @@ set.seed(123)
 #defining independent variables and their values
 n <- c(50, 100, 250, 500)
 intercepts <- c(0.1, 0.2, 0.3, 0.4)
-iterations <- 1:2
+iterations <- 1:1000
 ratios <- c(0.25, 0.5, 0.75)
 
 #creating a vector to save the model syntax
