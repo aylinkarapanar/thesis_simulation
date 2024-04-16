@@ -1,7 +1,9 @@
 #install.packages('lavaan')
 #install.packages('effectsize')
+#install.packages("semTools")
 library(lavaan)
 library(effectsize)
+library(semTools)
 
 #setting seed for reproducibility
 set.seed(123)
@@ -9,7 +11,7 @@ set.seed(123)
 #defining independent variables and their values
 n <- c(50, 100, 250, 500)
 intercepts <- c(0.1, 0.2, 0.3, 0.4)
-iterations <- 1:100
+iterations <- 1:2
 ratios <- c(0.25, 0.5, 0.75)
 
 #creating a vector to save the model syntax
@@ -64,17 +66,19 @@ for (i in 1:nrow(design)){
   #adding the data from the groups together
   scalar_data <- rbind(scalar_data_group1, scalar_data_group2)
   
-  #executing CFA for scalar invariance assessment 
-  cfa_model <- cfa(group1_string, data = scalar_data, group = "group", group.equal = c("loadings", "intercepts"))
+  #executing CFA for weak invariance assessment
+  cfa_metric <- cfa(group1_string, data = scalar_data, group = "group", group.equal = "loadings")
   
-  #defining the fit measures of interest
-  fit_measures <- fitMeasures(cfa_model, c("chisq", "pvalue", "cfi", "rmsea"))
- 
+  #executing CFA for scalar invariance assessment 
+  cfa_scalar <- cfa(group1_string, data = scalar_data, group = "group", group.equal = c("loadings", "intercepts"))
+  
+  compare_cfa <- compareFit(cfa_metric, cfa_scalar)
+  
   #recording the fit measures to the results df
-  results$chisq[results$ndesign == i] <- fit_measures['chisq']
-  results$pvalue[results$ndesign == i] <- fit_measures['pvalue']
-  results$cfi[results$ndesign == i] <- fit_measures['cfi']
-  results$rmsea[results$ndesign == i] <- fit_measures['rmsea']
+  results$chisq[results$ndesign == i] <- compare_cfa@nested$`Chisq diff`[2]
+  results$pvalue[results$ndesign == i] <- compare_cfa@nested$`Pr(>Chisq)`[2]
+  results$cfi[results$ndesign == i] <- compare_cfa@fit.diff$cfi
+  results$rmsea[results$ndesign == i] <- compare_cfa@fit.diff$rmsea
 }
 
 #turning these variables to categorical variables for executing ANOVA
