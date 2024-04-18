@@ -46,18 +46,26 @@ mean_rmsea <- results %>%
             ci_low = mean - 1.96 * se,
             ci_high = mean + 1.96 * se)
 
-
 rmsea_line_plot <- ggplot(mean_rmsea, aes(x = group_size, y = mean, color = magnitude_level)) +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0, position = position_dodge(width = 0.5)) +  
   geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
+  #define different cutoff points discussed by Chen (2007)
+  #for total N ≤ 300, difference in RMSEA ≥ .010 indicates noninvariance
+  #for total N > 300, difference in RMSEA ≥ .015 indicates noninvariance
+  #geom_segment(aes(x = 0, xend = 2.5, y = .010, yend = .010), 
+  #             linetype = "dotted", color = "black") +
+  #geom_segment(aes(x = 2.5, xend = 5, y = .015, yend = .015), 
+  #             linetype = "dotted", color = "black") +
   theme_apa() +
   scale_color_manual(name = "Magnitude Level", values = custom_colors) +
-  labs(title = "Graph of the Mean of RMSEA Values with 95% Confidence Interval",
-       subtitle = "by Sample Size Per Group, Magnitude Level & Noninvariance Ratios", 
+  labs(title = "Graph of the Mean of (\0xCE \0x94) RMSEA with 95% Confidence Interval",
+       subtitle = "by Sample Size Per Group, Magnitude Level", 
        x = "Sample Size Per Group",
-       y = "Difference in RMSEA") +
-  theme(legend.position = "bottom")  
+       y = "0xCE 0x94 RMSEA") +
+  theme(legend.position = "bottom")
 
+rmsea_line_plot <- rmsea_line_plot + annotate("segment", x = 0, xend = 2.5, y = .010, yend = .010, linetype = "dotted", color = "black") + annotate("segment", x = 2.5, xend = 5, y = .015, yend = .015, linetype = "dotted", color = "black")
+ 
 rmsea_file_path <- file.path(directory, "rmsea_line_plot.png")
 ggsave(rmsea_file_path, plot = rmsea_line_plot, width = 12, height = 6)
 
@@ -85,29 +93,3 @@ cfi_file_path <- file.path(directory, "cfi_line_plot.png")
 ggsave(cfi_file_path, plot = cfi_line_plot, width = 12, height = 6)
 
 
-# Convert group_size to numeric
-mean_rmsea$group_size <- as.numeric(as.character(mean_rmsea$group_size))
-
-# Define the thresholds for different group sizes
-threshold_small <- 0.010  # For group sizes 50 and 100
-threshold_large <- 0.005  # For group sizes 250 and 500
-
-# Create the plot
-rmsea_line_plot <- ggplot(mean_rmsea, aes(x = group_size, y = mean, color = magnitude_level)) +
-  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0, position = position_dodge(width = 0.5)) +  
-  geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
-  geom_segment(aes(x = 0, xend = 150, y = threshold_small, yend = threshold_small), 
-               linetype = "dashed", color = "black") +
-  geom_segment(aes(x = 150, xend = max(group_size), y = threshold_large, yend = threshold_large), 
-               linetype = "dashed", color = "black") +
-  theme_apa() +
-  scale_color_manual(name = "Magnitude Level", values = custom_colors) +
-  labs(title = "Graph of the Mean of RMSEA Values with 95% Confidence Interval",
-       subtitle = "by Sample Size Per Group, Magnitude Level & Noninvariance Ratios", 
-       x = "Sample Size Per Group",
-       y = "RMSEA") +
-  theme(legend.position = "bottom") +
-  scale_x_continuous(breaks = c(50, 100, 250, 500))
-
-# Print the plot
-print(rmsea_line_plot)
