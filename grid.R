@@ -5,6 +5,8 @@ library(lavaan)
 library(effectsize)
 library(semTools)
 
+
+
 #setting seed for reproducibility
 set.seed(123)
 
@@ -96,7 +98,7 @@ summary(anova_rmsea)
 anova_cfi <- aov(cfi ~ group_size * magnitude_level * model_ratios, data = results)
 summary(anova_cfi)
 
-#calculating the eta squared and interpreting them based on Cohen (1992)
+#calculating the eta squared and interpreting them based on Field (2013)
 eta_chisq <- eta_squared(anova_chisq)
 interpret_eta_squared(eta_chisq, rules = "field2013")
 
