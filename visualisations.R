@@ -55,6 +55,8 @@ ggsave(cfi_file_path, plot = cfi_color_plot, width = 12, height = 6)
 #install.packages('dplyr')
 library(dplyr)
 
+#ADD CUT OFFS AS LINES
+
 # calculating mean, standard error, and confidence intervals for Chi-square
 mean_chisq <- results %>%
   group_by(model_ratios, magnitude_level, group_size) %>%

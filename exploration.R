@@ -4,6 +4,7 @@ satisfactory_chisq <- aggregate(ifelse(results$pvalue > 0.05, 1, 0),
                                 FUN = mean)
 names(satisfactory_chisq) <- c("model_ratios", "magnitude_level", "group_size", "satisfactory_chisq")
 
+####CHANGE THE CUTOFFS TO CHEN(2007)
 # calculating the percentage of RMSEA values that are satisfactory (< .05) according to Byrne (1994) for each condition
 satisfactory_rmsea <- aggregate(interpret_rmsea(results$rmsea, rules = 'byrne1994'), 
                                            by = list(results$model_ratios, results$magnitude_level, results$group_size), 

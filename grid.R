@@ -98,10 +98,10 @@ summary(anova_cfi)
 
 #calculating the eta squared and interpreting them based on Cohen (1992)
 eta_chisq <- eta_squared(anova_chisq)
-interpret_eta_squared(eta_chisq, rules = "cohen1992")
+interpret_eta_squared(eta_chisq, rules = "field2013")
 
 eta_rmsea <- eta_squared(anova_rmsea)
-interpret_eta_squared(eta_rmsea, rules = "cohen1992")
+interpret_eta_squared(eta_rmsea, rules = "field2013")
 
 eta_cfi <- eta_squared(anova_cfi)
-interpret_eta_squared(eta_cfi, rules = "cohen1992")
+interpret_eta_squared(eta_cfi, rules = "field2013")
