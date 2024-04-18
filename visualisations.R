@@ -49,22 +49,19 @@ mean_rmsea <- results %>%
 rmsea_line_plot <- ggplot(mean_rmsea, aes(x = group_size, y = mean, color = magnitude_level)) +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0, position = position_dodge(width = 0.5)) +  
   geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
-  #define different cutoff points discussed by Chen (2007)
-  #for total N ≤ 300, difference in RMSEA ≥ .010 indicates noninvariance
-  #for total N > 300, difference in RMSEA ≥ .015 indicates noninvariance
-  #geom_segment(aes(x = 0, xend = 2.5, y = .010, yend = .010), 
-  #             linetype = "dotted", color = "black") +
-  #geom_segment(aes(x = 2.5, xend = 5, y = .015, yend = .015), 
-  #             linetype = "dotted", color = "black") +
   theme_apa() +
   scale_color_manual(name = "Magnitude Level", values = custom_colors) +
-  labs(title = "Graph of the Mean of (\0xCE \0x94) RMSEA with 95% Confidence Interval",
+  labs(title = expression(paste("Graph of the Mean of", Delta, "RMSEA with 95% Confidence Interval")),
        subtitle = "by Sample Size Per Group, Magnitude Level", 
        x = "Sample Size Per Group",
-       y = "0xCE 0x94 RMSEA") +
+       y = expression(paste(Delta, "RMSEA"))) +
   theme(legend.position = "bottom")
 
-rmsea_line_plot <- rmsea_line_plot + annotate("segment", x = 0, xend = 2.5, y = .010, yend = .010, linetype = "dotted", color = "black") + annotate("segment", x = 2.5, xend = 5, y = .015, yend = .015, linetype = "dotted", color = "black")
+#define different cutoff points discussed by Chen (2007)
+#for total N ≤ 300, difference in RMSEA ≥ .010 indicates noninvariance
+rmsea_line_plot <- rmsea_line_plot + annotate("segment", x = 0, xend = 2.5, y = .010, yend = .010, linetype = "dotted", color = "black") + 
+#for total N > 300, difference in RMSEA ≥ .015 indicates noninvariance
+annotate("segment", x = 2.5, xend = 5, y = .015, yend = .015, linetype = "dotted", color = "black")
  
 rmsea_file_path <- file.path(directory, "rmsea_line_plot.png")
 ggsave(rmsea_file_path, plot = rmsea_line_plot, width = 12, height = 6)
