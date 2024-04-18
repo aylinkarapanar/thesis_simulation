@@ -1,16 +1,11 @@
 #install.packages('lavaan')
 #install.packages('effectsize')
 #install.packages("semTools")
-#install.packages('fastmap')
-#install.packages("broom")
-library(rempsyc)
-
 
 library(lavaan)
 library(effectsize)
 library(semTools)
-library(fastmap)
-library(broom)
+
 
 
 #setting seed for reproducibility
