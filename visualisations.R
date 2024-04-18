@@ -13,8 +13,6 @@ custom_colors <- c("0.1" = "#1b9e77", "0.2" = "#d95f02", "0.3" = "#7570b3", "0.4
 
 
 
-#ADD CUT OFFS AS LINES
-
 # calculating mean, standard error, and confidence intervals for Chi-square
 mean_chisq <- results %>%
   group_by(model_ratios, magnitude_level, group_size) %>%
@@ -30,7 +28,7 @@ chisq_line_plot <- ggplot(mean_chisq, aes(x = group_size, y = mean, color = magn
   facet_wrap(~model_ratios) +
   scale_color_manual(name = "Magnitude Level", values = custom_colors) +
   labs(title = "Graph of the Mean of Chi-Square Values with 95% Confidence Interval",
-       subtitle = "by Sample Size Per Group, Magnitude Level & Noninvariance Ratios", 
+       subtitle = "by Sample Size Per Group & Magnitude Level", 
        x = "Sample Size Per Group",
        y = "Difference in Chi-Square") +
   theme(legend.position = "bottom")  
@@ -51,8 +49,8 @@ rmsea_line_plot <- ggplot(mean_rmsea, aes(x = group_size, y = mean, color = magn
   geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
   theme_apa() +
   scale_color_manual(name = "Magnitude Level", values = custom_colors) +
-  labs(title = expression(paste("Graph of the Mean of", Delta, "RMSEA with 95% Confidence Interval")),
-       subtitle = "by Sample Size Per Group, Magnitude Level", 
+  labs(title = expression(paste("Graph of the Mean of ", Delta, "RMSEA with 95% Confidence Interval")),
+       subtitle = "by Sample Size Per Group & Magnitude Level", 
        x = "Sample Size Per Group",
        y = expression(paste(Delta, "RMSEA"))) +
   theme(legend.position = "bottom")
@@ -74,17 +72,22 @@ mean_cfi <- results %>%
             ci_low = mean - 1.96 * se,
             ci_high = mean + 1.96 * se)
 
-
 cfi_line_plot <- ggplot(mean_cfi, aes(x = group_size, y = mean, color = magnitude_level)) +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0, position = position_dodge(width = 0.5)) +  
   geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
   theme_apa() +
   scale_color_manual(name = "Magnitude Level", values = custom_colors) +
-  labs(title = "Graph of the Mean of CFI Values with 95% Confidence Interval",
-       subtitle = "by Sample Size Per Group, Magnitude Level & Noninvariance Ratios", 
+  labs(title = expression(paste("Graph of the Mean of ", Delta, "CFI with 95% Confidence Interval")),
+       subtitle = "by Sample Size Per Group & Magnitude Level", 
        x = "Sample Size Per Group",
-       y = "Difference in CFI") +
+       y = expression(paste(Delta, "CFI"))) +
   theme(legend.position = "bottom")  
+
+#define different cutoff points discussed by Chen (2007)
+#for total N ≤ 300, difference in CFI ≥ -.005 indicates noninvariance
+cfi_line_plot <- cfi_line_plot + annotate("segment", x = 0, xend = 2.5, y = -.005, yend = -.005, linetype = "dotted", color = "black") + 
+#for total N > 300, difference in CFI ≥ -.010 indicates noninvariance
+annotate("segment", x = 2.5, xend = 5, y = -.010, yend = -.010, linetype = "dotted", color = "black")
 
 cfi_file_path <- file.path(directory, "cfi_line_plot.png")
 ggsave(cfi_file_path, plot = cfi_line_plot, width = 12, height = 6)

@@ -1,10 +1,16 @@
 #install.packages('lavaan')
 #install.packages('effectsize')
 #install.packages("semTools")
+#install.packages('fastmap')
+#install.packages("broom")
+library(rempsyc)
+
+
 library(lavaan)
 library(effectsize)
 library(semTools)
-
+library(fastmap)
+library(broom)
 
 
 #setting seed for reproducibility
@@ -89,7 +95,7 @@ results$magnitude_level <- factor(results$magnitude_level, levels = c("0.1", "0.
 results$model_ratios <- factor(results$model_ratios, levels = c("0.25", "0.5", "0.75", "1"))
 
 #running ANOVAs for each fit indices
-anova_chisq <- aov(chisq ~ group_size * magnitude_level * model_ratios, data = results)
+anova_chisq <- aov(chisq ~ group_size * magnitude_level * model_ratios, data = results) 
 summary(anova_chisq)
 
 anova_rmsea <- aov(rmsea ~ group_size * magnitude_level * model_ratios, data = results)
@@ -107,3 +113,9 @@ interpret_eta_squared(eta_rmsea, rules = "field2013")
 
 eta_cfi <- eta_squared(anova_cfi)
 interpret_eta_squared(eta_cfi, rules = "field2013")
+
+save(design, file = "design.Rda")
+save(results, file = "results.Rda")
+
+
+
