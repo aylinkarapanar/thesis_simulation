@@ -7,7 +7,6 @@ library(effectsize)
 library(semTools)
 
 
-
 #setting seed for reproducibility
 set.seed(123)
 
@@ -111,6 +110,3 @@ interpret_eta_squared(eta_cfi, rules = "field2013")
 
 save(design, file = "design.Rda")
 save(results, file = "results.Rda")
-
-
-
