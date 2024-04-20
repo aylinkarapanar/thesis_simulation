@@ -8,8 +8,8 @@ library(jtools)
 
 directory <- dirname(rstudioapi::getActiveDocumentContext()$path)
 
+#setting custom colors
 custom_colors <- c("0.1" = "#1b9e77", "0.2" = "#d95f02", "0.3" = "#7570b3", "0.4" = "#e7298a")
-
 
 # calculating mean, standard error, and confidence intervals for Chi-square
 mean_chisq <- results %>%
