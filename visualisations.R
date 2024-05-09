@@ -46,14 +46,15 @@ pvalue_line_plot <- ggplot(mean_p, aes(x = group_size, y = mean, color = magnitu
   geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
   geom_hline(yintercept = 0.05, linetype = "dotted", color = "black") +
   theme_apa() +
-  scale_color_manual(name = "Magnitude Level", values = custom_colors) +
-  labs(title = expression(paste("Graph of the Mean of ", italic("p"), "Values for ", Chi^2, " with 95% Confidence Interval")),
+  scale_color_manual(values = custom_colors) +
+  labs(title = expression(paste("Error Plot of ", italic("p"), " Values for ", Delta, Chi^2, " with 95% Confidence Interval")),
        subtitle = "by Sample Size Per Group & Magnitude Level", 
        x = "Sample Size Per Group",
-       y = expression(italic("p"))) +
-  theme(legend.position = "bottom")  
+       y = expression(italic("p")),
+       color = "Noninvariance \nMagnitude Levels") + 
+  theme(legend.position = "right", legend.title = element_text())+ 
+  scale_y_continuous(breaks = c(0.0, 0.05, 0.1, 0.2, 0.3, 0.4)) 
 
-pvalue_line_plot <- pvalue_line_plot + scale_y_continuous(breaks = c(0.0, 0.05, 0.1, 0.2, 0.3, 0.4))
 pvalue_file_path <- file.path(directory, "pvalue_line_plot.png")
 ggsave(pvalue_file_path, plot = pvalue_line_plot, width = 12, height = 6)
          
