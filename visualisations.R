@@ -161,3 +161,39 @@ magnitude_level_plot <- ggplot(mean_rmsea, aes(x = magnitude_level, y = mean)) +
 print(sample_size_plot)
 print(magnitude_level_plot)
 
+#################
+# Assuming you have the required data in the results dataframe, create mean_rmsea dataframe
+mean_rmsea <- results %>%
+  group_by(group_size) %>%
+  summarise(mean = mean(rmsea),
+            se = sd(rmsea) / sqrt(n()),
+            ci_low = mean - 1.96 * se,
+            ci_high = mean + 1.96 * se)
+
+# Convert group_size to factor
+mean_rmsea$group_size <- factor(mean_rmsea$group_size, levels = c("50", "100", "250", "500"))
+
+# Create plot for main effect of sample size
+rmsea_line_plot_sample_size <- ggplot(mean_rmsea, aes(x = group_size, y = mean)) +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0, position = position_dodge(width = 0.5)) +  
+  geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
+  theme_apa() +
+  labs(title = expression(paste("Graph of the Mean of ", Delta, "RMSEA with 95% Confidence Interval")),
+       subtitle = "Main Effect of Sample Size",
+       x = "Sample Size Per Group",
+       y = expression(paste(Delta, "RMSEA"))) +
+  theme(legend.position = "bottom") +
+  scale_y_continuous(breaks = c(0.0, 0.010, 0.015, 0.02, 0.04, 0.06))
+
+# Define different cutoff points discussed by Chen (2007)
+# For total N ≤ 300, difference in RMSEA ≥ .010 indicates noninvariance
+rmsea_line_plot_sample_size <- rmsea_line_plot_sample_size +
+  annotate("segment", x = 0, xend = 2.5, y = .010, yend = .010, linetype = "dotted", color = "black") + 
+  # For total N > 300, difference in RMSEA ≥ .015 indicates noninvariance
+  annotate("segment", x = 2.5, xend = 5, y = .015, yend = .015, linetype = "dotted", color = "black")
+
+# Print the plot
+print(rmsea_line_plot_sample_size)
+
+
+
