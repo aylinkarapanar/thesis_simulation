@@ -127,3 +127,68 @@ cfi_line_plot <- ggplot(mean_cfi, aes(x = magnitude_level, y = mean)) +
 
 cfi_file_path <- file.path(directory, "cfi_line_plot.png")
 ggsave(cfi_file_path, plot = cfi_line_plot, width = 12, height = 6)
+
+
+##################### 
+#model diagram
+library(DiagrammeR)
+
+grViz("
+digraph {
+  graph[rankdir = LR]
+  
+  node[shape = rectangle]
+  
+  node[ margin = 0.2]
+  A[label = 'Factor', shape = oval]
+  B[label = 'item 1']
+  C[label = 'item 2']
+  D[label = 'item 3']
+  E[label = 'item 4']
+  
+    
+  edge[color = black, arrowhead = vee, arrowsize = 1.25]
+  A -> B [label = '&lambda;']
+  A -> C [label = '&lambda;']
+  A -> D [label = '&lambda;']
+  A -> E [label = '&lambda;']
+}
+")
+
+
+#model diagram with intercept 
+
+grViz("
+digraph {
+  graph[rankdir = LR]
+
+  node[margin = 0.2]
+  A[label = 'Latent Factor', shape = oval]
+  B[label = 'Observed Indicator 1', shape = square]
+  C[label = 'Observed Indicator 2', shape = square]
+  D[label = 'Observed Indicator 3', shape = square]
+  E[label = 'Observed Indicator 4', shape = square]
+  F[label = 'Intercept', shape = triangle]
+
+  edge[color = black, arrowhead = vee, arrowsize = 1.25]
+  A -> B [label = '&Lambda;']
+  A -> C [label = '&Lambda;']
+  A -> D [label = '&Lambda;']
+  A -> E [label = '&Lambda;']
+}")
+
+  
+  
+#####################
+
+
+semPaths(cfa_scalar, what = "name", whatLabels = "name", intercepts = T, layout = "tree", style = "lisrel", 
+         nodeLabels = c("Factoor", "Iteem"),
+         edgeLabels = c("Factor", "Item 1", "Item 2", "Item 3", "Item 4"), )
+
+
+
+
+
+
+
