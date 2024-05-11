@@ -184,8 +184,16 @@ digraph {
 
 semPaths(cfa_scalar, what = "name", whatLabels = "name", intercepts = T, layout = "tree", style = "lisrel", 
          nodeLabels = c("Factoor", "Iteem"),
-         edgeLabels = c("Factor", "Item 1", "Item 2", "Item 3", "Item 4"), )
+         edgeLabels = c("Factor", "Item 1", "Item 2", "Item 3", "Item 4"))
 
+semPaths(cfa_scalar, 
+         what = "est", 
+         whatLabels = "est", 
+         intercepts = TRUE, 
+         layout = "tree", 
+         style = "lisrel", 
+         nodeLabels = c("Factor", "Item 1", "Item 2", "Item 3", "Item 4"),
+         edgeLabels = c("Factor:Factor", "Factor:Item 1", "Factor:Item 2", "Factor:Item 3", "Factor:Item 4"))
 
 
 
