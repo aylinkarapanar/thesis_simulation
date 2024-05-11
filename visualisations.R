@@ -127,8 +127,3 @@ cfi_line_plot <- ggplot(mean_cfi, aes(x = magnitude_level, y = mean)) +
 
 cfi_file_path <- file.path(directory, "cfi_line_plot.png")
 ggsave(cfi_file_path, plot = cfi_line_plot, width = 12, height = 6)
-
-
-
-
-
