@@ -74,7 +74,7 @@ rmsea_magnitude_level_plot <- ggplot(mean_rmsea, aes(x = magnitude_level, y = me
   labs(title = expression(paste("Error Plot of Mean ", Delta, "RMSEA with 95% Confidence Interval")),
        subtitle = "by Noninvariance Magnitude Level",
        x = "Noninvariance Magnitude Level",
-       y = "Mean RMSEA")
+       y = expression(paste(Delta, "RMSEA")))
 
 rmsea_magnitude_file_path <- file.path(directory, "rmsea_magnitude_level_plot.png")
 ggsave(rmsea_magnitude_file_path, plot = rmsea_magnitude_level_plot, width = 12, height = 6)
@@ -92,11 +92,11 @@ rmsea_sample_size_plot <- ggplot(mean_rmsea, aes(x = group_size, y = mean)) +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0) +  
   geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
   theme_apa() +
-  labs(title = expression(paste("Graph of the Mean of ", Delta, "RMSEA with 95% Confidence Interval")),
+  labs(title = expression(paste("Error Plot of Mean ", Delta, "RMSEA with 95% Confidence Interval")),
        subtitle = "by Sample Size Per Group",
        x = "Sample Size Per Group",
        y = expression(paste(Delta, "RMSEA"))) +
-  scale_y_continuous(breaks = c(0.0, 0.010, 0.015, 0.02, 0.04, 0.06))
+  scale_y_continuous(breaks = c(0.0, 0.010, 0.015, 0.02, 0.03))
 
 # define different cutoff points discussed by Chen (2007)
 # for total N ≤ 300, difference in RMSEA ≥ .010 indicates noninvariance
@@ -121,7 +121,7 @@ cfi_line_plot <- ggplot(mean_cfi, aes(x = magnitude_level, y = mean)) +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0) +  
   geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
   theme_apa() +
-  labs(title = expression(paste("Graph of the Mean of ", Delta, "CFI with 95% Confidence Interval")),
+  labs(title = expression(paste("Error Plot of Mean ", Delta, "CFI with 95% Confidence Interval")),
        x = "Noninvariance Magnitude Level",
        y = expression(paste(Delta, "CFI"))) 
 
@@ -129,7 +129,7 @@ cfi_file_path <- file.path(directory, "cfi_line_plot.png")
 ggsave(cfi_file_path, plot = cfi_line_plot, width = 12, height = 6)
 
 
-##################### 
+###########################################################################################################################################
 #model diagram
 library(DiagrammeR)
 
