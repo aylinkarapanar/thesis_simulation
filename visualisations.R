@@ -130,73 +130,97 @@ ggsave(cfi_file_path, plot = cfi_line_plot, width = 12, height = 6)
 
 
 ###########################################################################################################################################
-#model diagram
-library(DiagrammeR)
+group1_string <- "latent =~ item1 + item2 + item3 + item4"
 
-grViz("
-digraph {
-  graph[rankdir = LR]
+#simulating data for both groups with defined model syntax and sample size
+dia_data_group1 <- simulateData(model = group1_string, sample.nobs = 50)
+dia_data_group2 <- simulateData(model = group1_string, sample.nobs = 50)
   
-  node[shape = rectangle]
+  #adding grouping variable for both
+dia_data_group1$group <- "Group1"
+dia_data_group2$group <- "Group2"
   
-  node[ margin = 0.2]
-  A[label = 'Factor', shape = oval]
-  B[label = 'item 1']
-  C[label = 'item 2']
-  D[label = 'item 3']
-  E[label = 'item 4']
+  #adding the data from the groups together
+dia_data <- rbind(dia_data_group1, dia_data_group2)
   
-    
-  edge[color = black, arrowhead = vee, arrowsize = 1.25]
-  A -> B [label = '&lambda;']
-  A -> C [label = '&lambda;']
-  A -> D [label = '&lambda;']
-  A -> E [label = '&lambda;']
-}
-")
-
-
-#model diagram with intercept 
-
-grViz("
-digraph {
-  graph[rankdir = LR]
-
-  node[margin = 0.2]
-  A[label = 'Latent Factor', shape = oval]
-  B[label = 'Observed Indicator 1', shape = square]
-  C[label = 'Observed Indicator 2', shape = square]
-  D[label = 'Observed Indicator 3', shape = square]
-  E[label = 'Observed Indicator 4', shape = square]
-  F[label = 'Intercept', shape = triangle]
-
-  edge[color = black, arrowhead = vee, arrowsize = 1.25]
-  A -> B [label = '&Lambda;']
-  A -> C [label = '&Lambda;']
-  A -> D [label = '&Lambda;']
-  A -> E [label = '&Lambda;']
-}")
-
+dia_cfa_metric <- cfa(group1_string, data = dia_data, group = "group", group.equal = "loadings")
   
+  #executing CFA for scalar invariance assessment 
+dia_cfa_scalar <- cfa(group1_string, data = dia_data, group = "group", group.equal = c("loadings", "intercepts"))
+
+dia_cfa_res <- cfa(group1_string, data = dia_data, group = "group", group.equal = c("loadings", "intercepts", "residuals"))
   
-#####################
 
 
-semPaths(cfa_scalar, what = "name", whatLabels = "name", intercepts = T, layout = "tree", style = "lisrel", 
-         nodeLabels = c("Factoor", "Iteem"),
-         edgeLabels = c("Factor", "Item 1", "Item 2", "Item 3", "Item 4"))
-
-semPaths(cfa_scalar, 
-         what = "est", 
-         whatLabels = "est", 
-         intercepts = TRUE, 
-         layout = "tree", 
-         style = "lisrel", 
-         nodeLabels = c("Factor", "Item 1", "Item 2", "Item 3", "Item 4"),
-         edgeLabels = c("Factor:Factor", "Factor:Item 1", "Factor:Item 2", "Factor:Item 3", "Factor:Item 4"))
+node_labels <- c("Item 1", "Item 2", "Item 3", "Item 4", "Factor")
+edge_labels <- c("λ", "λ", "λ", "λ")
+semPaths(dia_cfa_scalar, intercepts = F, nodeLabels = node_labels, sizeMan = 8, edgeLabels = edge_labels, edge.label.cex = 1)
 
 
 
+
+
+node_labels <- c("Item 1", "Item 2", "Item 3", "Item 4", "Factor", "v", "v", "v", "v", "v")
+edge_labels <- c("λ", "λ", "λ", "λ")
+semPaths(dia_cfa_scalar, intercepts = T, sizeMan = 8, edgeLabels = edge_labels, nodeLabels = node_labels, residuals = T, optimizeLatRes = T)
+
+
+
+semPaths(dia_cfa_res, intercepts = T, residuals = T,  edge.label.cex = 1, sizeMan = 10)
+
+###########
+# Install and load the semPlot package if you haven't already
+install.packages("semPlot")
+library(semPlot)
+install.packages("OpenMx")
+library(OpenMx)
+
+# Define manifest and latent variables
+manifestVars <- c("Item 1", "Item 2", "Item 3", "Item 4")  # Four observed variables
+latentVar <- "Factor"  # One latent factor
+
+# Residual variances
+resVars <- mxPath(from = manifestVars, arrows = 2,
+                  free = TRUE, values = c(1, 1, 1, 1),
+                  labels = paste0("e", 1:4))
+
+# Means with different intercepts
+means <- mxPath(from = "one", to = manifestVars,
+                arrows = 1,
+                free = c(TRUE, TRUE, TRUE, TRUE),
+                values = c(1, 2, 3, 4),  # Different intercepts
+                labels = paste0("i", 1:4))
+
+# Latent variable variance
+latVar <- mxPath(from = "Factor", arrows = 2,
+                 free = TRUE, values = 1, labels = "varF1")
+
+# Factor loadings with the lambda symbol
+facLoads <- mxPath(from = "Factor", to = manifestVars, arrows = 1,
+                   free = TRUE, values = c(1, 1, 1, 1),
+                   labels = paste0("λ", 1:4))  # Lambda1, Lambda2, etc.
+
+# Define the model
+oneFactorModel <- mxModel("One Factor Model Path Specification", type = "RAM",
+                          manifestVars = manifestVars, latentVars = latentVar,
+                          resVars, means, latVar, facLoads)
+
+# Generate simulated data
+simulatedData <- mxData(observed = mxGenerateData(oneFactorModel, nrows = 100), 'raw')
+
+# Associate the data with the model
+oneFactorModel <- mxModel(oneFactorModel, simulatedData)
+
+# Run the model
+fit <- mxRun(oneFactorModel)
+
+# Summarize the fit
+summary(fit)
+
+# Use semPlot to draw the OpenMx model fit
+semPaths(fit, residuals = FALSE, sizeMan = 7, "std", 
+         posCol = c("skyblue4", "red"),
+         edge.label.cex = 1.2, layout = "circle2")
 
 
 
