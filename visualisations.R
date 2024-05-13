@@ -130,22 +130,26 @@ ggsave(cfi_file_path, plot = cfi_line_plot, width = 12, height = 6)
 
 
 ###########################################################################################################################################
+#Diagram
+install.packages("semPlot")
+library(semPlot)
+
 group1_string <- "latent =~ item1 + item2 + item3 + item4"
 
-#simulating data for both groups with defined model syntax and sample size
+
 dia_data_group1 <- simulateData(model = group1_string, sample.nobs = 50)
 dia_data_group2 <- simulateData(model = group1_string, sample.nobs = 50)
   
-  #adding grouping variable for both
+
 dia_data_group1$group <- "Group1"
 dia_data_group2$group <- "Group2"
   
-  #adding the data from the groups together
+
 dia_data <- rbind(dia_data_group1, dia_data_group2)
   
 dia_cfa_metric <- cfa(group1_string, data = dia_data, group = "group", group.equal = "loadings")
   
-  #executing CFA for scalar invariance assessment 
+
 dia_cfa_scalar <- cfa(group1_string, data = dia_data, group = "group", group.equal = c("loadings", "intercepts"))
 
 dia_cfa_res <- cfa(group1_string, data = dia_data, group = "group", group.equal = c("loadings", "intercepts", "residuals"))
@@ -158,69 +162,16 @@ semPaths(dia_cfa_scalar, intercepts = F, nodeLabels = node_labels, sizeMan = 8, 
 
 
 
+node_labels <- c("Item 1", "Item 2", "Item 3", "Item 4", "Factor", "1",  "1", "1", "1", "1")
+edge_labels <- c("λ", "λ", "λ", "λ","ε", "ε", "ε", "ε", "Ψ", "v", "v", "v", "v")
+semPaths(dia_cfa_scalar, intercepts = T, nodeLabels = node_labels, sizeMan = 8, edgeLabels = edge_labels, edge.label.cex = 1)
 
 
-node_labels <- c("Item 1", "Item 2", "Item 3", "Item 4", "Factor", "v", "v", "v", "v", "v")
-edge_labels <- c("λ", "λ", "λ", "λ")
-semPaths(dia_cfa_scalar, intercepts = T, sizeMan = 8, edgeLabels = edge_labels, nodeLabels = node_labels, residuals = T, optimizeLatRes = T)
+node_labels <- c("Item 1", "Item 2", "Item 3", "Item 4", "Factor", "1",  "1", "1", "1", "1")
 
 
+edge_labels <- c(expression(paste(λ[1])), expression(paste(λ[2])), expression(paste(λ[3])), expression(paste(λ[4])),
+                 expression(paste(ε[1])), expression(paste(ε[2])), expression(paste(ε[3])), expression(paste(ε[4])),
+                 expression(paste(Ψ)), expression(paste(v[1])), expression(paste(v[2])), expression(paste(v[3])), expression(paste(v[4])))
 
-semPaths(dia_cfa_res, intercepts = T, residuals = T,  edge.label.cex = 1, sizeMan = 10)
-
-###########
-# Install and load the semPlot package if you haven't already
-install.packages("semPlot")
-library(semPlot)
-install.packages("OpenMx")
-library(OpenMx)
-
-# Define manifest and latent variables
-manifestVars <- c("Item 1", "Item 2", "Item 3", "Item 4")  # Four observed variables
-latentVar <- "Factor"  # One latent factor
-
-# Residual variances
-resVars <- mxPath(from = manifestVars, arrows = 2,
-                  free = TRUE, values = c(1, 1, 1, 1),
-                  labels = paste0("e", 1:4))
-
-# Means with different intercepts
-means <- mxPath(from = "one", to = manifestVars,
-                arrows = 1,
-                free = c(TRUE, TRUE, TRUE, TRUE),
-                values = c(1, 2, 3, 4),  # Different intercepts
-                labels = paste0("i", 1:4))
-
-# Latent variable variance
-latVar <- mxPath(from = "Factor", arrows = 2,
-                 free = TRUE, values = 1, labels = "varF1")
-
-# Factor loadings with the lambda symbol
-facLoads <- mxPath(from = "Factor", to = manifestVars, arrows = 1,
-                   free = TRUE, values = c(1, 1, 1, 1),
-                   labels = paste0("λ", 1:4))  # Lambda1, Lambda2, etc.
-
-# Define the model
-oneFactorModel <- mxModel("One Factor Model Path Specification", type = "RAM",
-                          manifestVars = manifestVars, latentVars = latentVar,
-                          resVars, means, latVar, facLoads)
-
-# Generate simulated data
-simulatedData <- mxData(observed = mxGenerateData(oneFactorModel, nrows = 100), 'raw')
-
-# Associate the data with the model
-oneFactorModel <- mxModel(oneFactorModel, simulatedData)
-
-# Run the model
-fit <- mxRun(oneFactorModel)
-
-# Summarize the fit
-summary(fit)
-
-# Use semPlot to draw the OpenMx model fit
-semPaths(fit, residuals = FALSE, sizeMan = 7, "std", 
-         posCol = c("skyblue4", "red"),
-         edge.label.cex = 1.2, layout = "circle2")
-
-
-
+semPaths(cfa_scalar, intercepts = TRUE, sizeMan = 8, edgeLabels = edge_labels, nodeLabels = node_labels, edge.label.cex = 1, residuals = TRUE, optimizeLatRes = TRUE, filetype = "png", filename = "diagram")
