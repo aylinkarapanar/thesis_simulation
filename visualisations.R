@@ -78,6 +78,11 @@ rmsea_magnitude_level_plot <- ggplot(mean_rmsea, aes(x = magnitude_level, y = me
        x = "Noninvariance Magnitude Level",
        y = expression(paste(Delta, "RMSEA")))
 
+# define the cutoff point discussed by Chen (2007)
+rmsea_magnitude_level_plot  <- rmsea_magnitude_level_plot +
+  # for total N > 300, difference in RMSEA ≥ .015 indicates noninvariance
+  annotate("segment", x = 0, xend = 5, y = .015, yend = .015, linetype = "dotted")
+
 rmsea_magnitude_file_path <- file.path(directory, "rmsea_magnitude_level_plot.png")
 ggsave(rmsea_magnitude_file_path, plot = rmsea_magnitude_level_plot, width = 12, height = 6)
 
@@ -101,7 +106,7 @@ rmsea_sample_size_plot <- ggplot(mean_rmsea, aes(x = group_size, y = mean)) +
   scale_y_continuous(breaks = c(0.0, 0.010, 0.015, 0.02, 0.03))
 
 # define different cutoff points discussed by Chen (2007)
-# for total N ≤ 300, difference in RMSEA ≥ .010 indicates noninvariance
+# for total N ≤ 300, difference in RMSEA  .010 indicates noninvariance
 rmsea_sample_size_plot <- rmsea_sample_size_plot +
   annotate("segment", x = 0, xend = 2.5, y = .010, yend = .010, linetype = "dotted") + 
   # for total N > 300, difference in RMSEA ≥ .015 indicates noninvariance
@@ -126,6 +131,11 @@ cfi_line_plot <- ggplot(mean_cfi, aes(x = magnitude_level, y = mean)) +
   labs(title = expression(paste("Error Plot of Mean ", Delta, "CFI with 95% Confidence Interval")),
        x = "Noninvariance Magnitude Level",
        y = expression(paste(Delta, "CFI"))) 
+
+# define the cutoff point discussed by Chen (2007)
+cfi_line_plot <- cfi_line_plot +
+  #for total N > 300, difference in CFI ≥ -.010 indicates noninvariance
+  annotate("segment", x = 0, xend = 5, y = -.010, yend = -.010, linetype = "dotted")
 
 cfi_file_path <- file.path(directory, "cfi_line_plot.png")
 ggsave(cfi_file_path, plot = cfi_line_plot, width = 12, height = 6)
