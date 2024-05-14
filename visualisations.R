@@ -1,10 +1,12 @@
 #install.packages('ggplot2')
 #install.packages('dplyr')
 #install.packages('jtools')
+#install.packages("semPlot")
 
 library(ggplot2)
 library(dplyr)
 library(jtools)
+library(semPlot)
 
 directory <- dirname(rstudioapi::getActiveDocumentContext()$path)
 
@@ -130,48 +132,13 @@ ggsave(cfi_file_path, plot = cfi_line_plot, width = 12, height = 6)
 
 
 ###########################################################################################################################################
-#Diagram
-install.packages("semPlot")
-library(semPlot)
-
-group1_string <- "latent =~ item1 + item2 + item3 + item4"
-
-
-dia_data_group1 <- simulateData(model = group1_string, sample.nobs = 50)
-dia_data_group2 <- simulateData(model = group1_string, sample.nobs = 50)
-  
-
-dia_data_group1$group <- "Group1"
-dia_data_group2$group <- "Group2"
-  
-
-dia_data <- rbind(dia_data_group1, dia_data_group2)
-  
-dia_cfa_metric <- cfa(group1_string, data = dia_data, group = "group", group.equal = "loadings")
-  
-
-dia_cfa_scalar <- cfa(group1_string, data = dia_data, group = "group", group.equal = c("loadings", "intercepts"))
-
-dia_cfa_res <- cfa(group1_string, data = dia_data, group = "group", group.equal = c("loadings", "intercepts", "residuals"))
-  
-
-
-node_labels <- c("Item 1", "Item 2", "Item 3", "Item 4", "Factor")
-edge_labels <- c("λ", "λ", "λ", "λ")
-semPaths(dia_cfa_scalar, intercepts = F, nodeLabels = node_labels, sizeMan = 8, edgeLabels = edge_labels, edge.label.cex = 1)
-
-
-
-node_labels <- c("Item 1", "Item 2", "Item 3", "Item 4", "Factor", "1",  "1", "1", "1", "1")
-edge_labels <- c("λ", "λ", "λ", "λ","ε", "ε", "ε", "ε", "Ψ", "v", "v", "v", "v")
-semPaths(dia_cfa_scalar, intercepts = T, nodeLabels = node_labels, sizeMan = 8, edgeLabels = edge_labels, edge.label.cex = 1)
+#Model Diagram
 
 
 node_labels <- c("Item 1", "Item 2", "Item 3", "Item 4", "Factor", "1",  "1", "1", "1", "1")
 
-
-edge_labels <- c(expression(paste(λ[1])), expression(paste(λ[2])), expression(paste(λ[3])), expression(paste(λ[4])),
+edge_labels <- c(expression(paste(Λ[11])), expression(paste(Λ[21])), expression(paste(Λ[31])), expression(paste(Λ[41])),
                  expression(paste(ε[1])), expression(paste(ε[2])), expression(paste(ε[3])), expression(paste(ε[4])),
-                 expression(paste(Ψ)), expression(paste(v[1])), expression(paste(v[2])), expression(paste(v[3])), expression(paste(v[4])))
+                 expression(paste(Ψ[11])), expression(paste(v[1])), expression(paste(v[2])), expression(paste(v[3])), expression(paste(v[4])))
 
 semPaths(cfa_scalar, intercepts = TRUE, sizeMan = 8, edgeLabels = edge_labels, nodeLabels = node_labels, edge.label.cex = 1, residuals = TRUE, optimizeLatRes = TRUE, filetype = "png", filename = "diagram")
