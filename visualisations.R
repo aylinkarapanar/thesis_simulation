@@ -44,17 +44,21 @@ mean_p <- results %>%
             ci_high = mean + 1.96 * se)
 
 pvalue_line_plot <- ggplot(mean_p, aes(x = group_size, y = mean, color = magnitude_level)) +
-  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0, position = position_dodge(width = 0.5)) + 
-  geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2, position = position_dodge(width = 0.5)) + 
+  geom_point(position = position_dodge(width = 0.5), size = 2) +  
   geom_hline(yintercept = 0.05, linetype = "dotted", color = "black") +
-  theme_apa() +
+  theme_apa(legend.pos = "right", legend.use.title = T, 
+            legend.font.size = 14,
+            x.font.size = 14,
+            y.font.size = 14,
+            facet.title.size = 14) +
+  theme(axis.text = element_text(size = 12))+
   scale_color_manual(values = custom_colors) +
   labs(title = expression(paste("Error Plot of Mean ", italic("p"), " Values for ", Delta, Chi^2, " with 95% Confidence Interval")),
        subtitle = "by Sample Size Per Group & Magnitude Level", 
        x = "Sample Size Per Group",
        y = expression(italic("p")),
        color = "Noninvariance \nMagnitude Levels") + 
-  theme(legend.position = "right", legend.title = element_text())+ 
   scale_y_continuous(breaks = c(0.0, 0.05, 0.1, 0.2, 0.3, 0.4)) 
 
 pvalue_file_path <- file.path(directory, "pvalue_line_plot.png")
@@ -70,13 +74,18 @@ mean_rmsea <- results %>%
             ci_high = mean + 1.96 * se)
 
 rmsea_magnitude_level_plot <- ggplot(mean_rmsea, aes(x = magnitude_level, y = mean)) +
-  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0) +  
-  geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
-  theme_apa() +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2) +  
+  geom_point(position = position_dodge(width = 0.5), size = 2) +  
+  theme_apa(x.font.size = 14,
+            y.font.size = 14,
+            facet.title.size = 14) +
+  theme(axis.text = element_text(size = 12)) +
   labs(title = expression(paste("Error Plot of Mean ", Delta, "RMSEA with 95% Confidence Interval")),
        subtitle = "by Noninvariance Magnitude Level",
        x = "Noninvariance Magnitude Level",
-       y = expression(paste(Delta, "RMSEA")))
+       y = expression(paste(Delta, "RMSEA"))) +
+  scale_y_continuous(breaks = c(0.010, 0.015, 0.02, 0.03, 0.04, 0.05))
+
 
 # define the cutoff point discussed by Chen (2007)
 rmsea_magnitude_level_plot  <- rmsea_magnitude_level_plot +
@@ -96,14 +105,17 @@ mean_rmsea <- results %>%
             ci_high = mean + 1.96 * se)
 
 rmsea_sample_size_plot <- ggplot(mean_rmsea, aes(x = group_size, y = mean)) +
-  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0) +  
-  geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
-  theme_apa() +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2) +  
+  geom_point(position = position_dodge(width = 0.5), size = 2) +  
+  theme_apa(x.font.size = 14,
+            y.font.size = 14,
+            facet.title.size = 14) +
+  theme(axis.text = element_text(size = 12))+
   labs(title = expression(paste("Error Plot of Mean ", Delta, "RMSEA with 95% Confidence Interval")),
        subtitle = "by Sample Size Per Group",
        x = "Sample Size Per Group",
        y = expression(paste(Delta, "RMSEA"))) +
-  scale_y_continuous(breaks = c(0.0, 0.010, 0.015, 0.02, 0.03))
+  scale_y_continuous(breaks = c(0.010, 0.015, 0.02, 0.03, 0.04, 0.05))
 
 # define different cutoff points discussed by Chen (2007)
 # for total N ≤ 300, difference in RMSEA  .010 indicates noninvariance
