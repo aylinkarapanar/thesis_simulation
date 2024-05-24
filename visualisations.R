@@ -33,7 +33,7 @@ chisq_line_plot <- ggplot(mean_chisq, aes(x = group_size, y = mean, color = magn
   theme(legend.position = "bottom")  
 
 chisq_file_path <- file.path(directory, "chisq_line_plot.png")
-ggsave(chisq_file_path, plot = chisq_line_plot, width = 12, height = 6)
+ggsave(chisq_file_path, plot = chisq_line_plot)
 
 #p-values
 mean_p <- results %>%
@@ -47,7 +47,7 @@ pvalue_line_plot <- ggplot(mean_p, aes(x = group_size, y = mean, color = magnitu
   geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2, position = position_dodge(width = 0.5)) + 
   geom_point(position = position_dodge(width = 0.5), size = 2) +  
   geom_hline(yintercept = 0.05, linetype = "dotted", color = "black") +
-  theme_apa(legend.pos = "right", legend.use.title = T, 
+  theme_apa(legend.pos = "bottom", legend.use.title = T, 
             legend.font.size = 14,
             x.font.size = 14,
             y.font.size = 14,
@@ -62,7 +62,7 @@ pvalue_line_plot <- ggplot(mean_p, aes(x = group_size, y = mean, color = magnitu
   scale_y_continuous(breaks = c(0.0, 0.05, 0.1, 0.2, 0.3, 0.4)) 
 
 pvalue_file_path <- file.path(directory, "pvalue_line_plot.png")
-ggsave(pvalue_file_path, plot = pvalue_line_plot, width = 12, height = 6)
+ggsave(pvalue_file_path, plot = pvalue_line_plot)
          
 # calculating mean, standard error, and confidence intervals for RMSEA
 # plot for main effect of magnitude level
@@ -93,7 +93,7 @@ rmsea_magnitude_level_plot  <- rmsea_magnitude_level_plot +
   annotate("segment", x = 0, xend = 5, y = .015, yend = .015, linetype = "dotted")
 
 rmsea_magnitude_file_path <- file.path(directory, "rmsea_magnitude_level_plot.png")
-ggsave(rmsea_magnitude_file_path, plot = rmsea_magnitude_level_plot, width = 12, height = 6)
+ggsave(rmsea_magnitude_file_path, plot = rmsea_magnitude_level_plot)
 
 
 # plot for the main effect of sample size 
@@ -125,7 +125,7 @@ rmsea_sample_size_plot <- rmsea_sample_size_plot +
   annotate("segment", x = 2.5, xend = 5, y = .015, yend = .015, linetype = "dotted")
 
 rmsea_sample_size_file_path <- file.path(directory, "rmsea_sample_size_plot.png")
-ggsave(rmsea_sample_size_file_path, plot = rmsea_sample_size_plot, width = 12, height = 6)
+ggsave(rmsea_sample_size_file_path, plot = rmsea_sample_size_plot)
 
 
 # calculating mean, standard error, and confidence intervals for CFI
@@ -137,9 +137,12 @@ mean_cfi <- results %>%
             ci_high = mean + 1.96 * se)
 
 cfi_line_plot <- ggplot(mean_cfi, aes(x = magnitude_level, y = mean)) +
-  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0) +  
-  geom_point(position = position_dodge(width = 0.5), size = 1.5) +  
-  theme_apa() +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.2) +  
+  geom_point(position = position_dodge(width = 0.5), size = 2) +  
+  theme_apa(x.font.size = 14,
+            y.font.size = 14,
+            facet.title.size = 14) +
+  theme(axis.text = element_text(size = 12))+
   labs(title = expression(paste("Error Plot of Mean ", Delta, "CFI with 95% Confidence Interval")),
        x = "Noninvariance Magnitude Level",
        y = expression(paste(Delta, "CFI"))) 
@@ -150,7 +153,7 @@ cfi_line_plot <- cfi_line_plot +
   annotate("segment", x = 0, xend = 5, y = -.010, yend = -.010, linetype = "dotted")
 
 cfi_file_path <- file.path(directory, "cfi_line_plot.png")
-ggsave(cfi_file_path, plot = cfi_line_plot, width = 12, height = 6)
+ggsave(cfi_file_path, plot = cfi_line_plot)
 
 
 ###########################################################################################################################################
